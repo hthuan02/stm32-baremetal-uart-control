@@ -1,0 +1,128 @@
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+FLASH            0x08000000         0x00010000         xr
+SRAM             0x20000000         0x00005000         xrw
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD output/gpio.o
+LOAD output/uart.o
+LOAD output/ring_buffer.o
+LOAD output/main.o
+LOAD output/stm32_startup.o
+
+.text           0x08000000      0x54c
+                0x08000000                . = ALIGN (0x4)
+ *(.isr_vector)
+ .isr_vector    0x08000000       0xdc output/stm32_startup.o
+                0x08000000                vectors
+ *(.text)
+ .text          0x080000dc       0xb8 output/gpio.o
+                0x080000dc                GPIO_Config
+                0x0800015c                LED_ON
+                0x08000178                LED_OFF
+ .text          0x08000194      0x198 output/uart.o
+                0x08000234                USART2_Config
+                0x080002d4                USART2_SendChar
+                0x08000300                USART2_SendString
+ .text          0x0800032c      0x12c output/ring_buffer.o
+                0x0800032c                RingBuffer_Write
+                0x0800037a                RingBuffer_Read
+                0x080003d4                RingBuffer_Available
+                0x08000400                USART2_IRQHandler
+ .text          0x08000458       0x6c output/main.o
+                0x08000458                main
+ .text          0x080004c4       0x64 output/stm32_startup.o
+                0x080004c4                Reset_Handler
+                0x08000520                SysTick_Handler
+                0x08000520                PendSV_Handler
+                0x08000520                NMI_Handler
+                0x08000520                UsageFault_Handler
+                0x08000520                HardFault_Handler
+                0x08000520                DebugMon_Handler
+                0x08000520                Default_Handler
+                0x08000520                MemManage_Handler
+                0x08000520                SVC_Handler
+                0x08000520                BusFault_Handler
+ *(.text*)
+ *(.rodata)
+ .rodata        0x08000528       0x21 output/main.o
+ *(.rodata*)
+                0x0800054c                . = ALIGN (0x4)
+ *fill*         0x08000549        0x3 
+                0x0800054c                _etext = .
+
+.glue_7         0x0800054c        0x0
+ .glue_7        0x0800054c        0x0 linker stubs
+
+.glue_7t        0x0800054c        0x0
+ .glue_7t       0x0800054c        0x0 linker stubs
+
+.vfp11_veneer   0x0800054c        0x0
+ .vfp11_veneer  0x0800054c        0x0 linker stubs
+
+.v4_bx          0x0800054c        0x0
+ .v4_bx         0x0800054c        0x0 linker stubs
+
+.iplt           0x0800054c        0x0
+ .iplt          0x0800054c        0x0 output/uart.o
+
+.rel.dyn        0x0800054c        0x0
+ .rel.iplt      0x0800054c        0x0 output/uart.o
+
+.data           0x20000000        0x0 load address 0x0800054c
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sdata = .
+ *(.data)
+ .data          0x20000000        0x0 output/gpio.o
+ .data          0x20000000        0x0 output/uart.o
+ .data          0x20000000        0x0 output/ring_buffer.o
+ .data          0x20000000        0x0 output/main.o
+ .data          0x20000000        0x0 output/stm32_startup.o
+ *(.data*)
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _edata = .
+
+.igot.plt       0x20000000        0x0 load address 0x0800054c
+ .igot.plt      0x20000000        0x0 output/uart.o
+
+.bss            0x20000000       0x44 load address 0x0800054c
+                0x20000000                . = ALIGN (0x4)
+                0x20000000                _sbss = .
+ *(.bss)
+ .bss           0x20000000        0x0 output/gpio.o
+ .bss           0x20000000        0x0 output/uart.o
+ .bss           0x20000000        0x0 output/ring_buffer.o
+ .bss           0x20000000       0x44 output/main.o
+                0x20000000                uart_rx_buffer
+ .bss           0x20000044        0x0 output/stm32_startup.o
+ *(.bss*)
+ *(COMMON)
+                0x20000044                . = ALIGN (0x4)
+                0x20000044                _ebss = .
+OUTPUT(output/baremetal_uart.elf elf32-littlearm)
+LOAD linker stubs
+
+.comment        0x00000000       0x49
+ .comment       0x00000000       0x49 output/gpio.o
+                                 0x4a (size before relaxing)
+ .comment       0x00000049       0x4a output/uart.o
+ .comment       0x00000049       0x4a output/ring_buffer.o
+ .comment       0x00000049       0x4a output/main.o
+ .comment       0x00000049       0x4a output/stm32_startup.o
+
+.ARM.attributes
+                0x00000000       0x2d
+ .ARM.attributes
+                0x00000000       0x2d output/gpio.o
+ .ARM.attributes
+                0x0000002d       0x2d output/uart.o
+ .ARM.attributes
+                0x0000005a       0x2d output/ring_buffer.o
+ .ARM.attributes
+                0x00000087       0x2d output/main.o
+ .ARM.attributes
+                0x000000b4       0x2d output/stm32_startup.o
