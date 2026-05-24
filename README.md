@@ -76,7 +76,7 @@ Hardware Specifications
 ├── Makefile                # Script tự động hóa toàn bộ quy trình biên dịch (Build Process)
 └── README.md               # Tài liệu hướng dẫn và mô tả chi tiết dự án
 ```
-## I. Build process & Flash firmware
+## II. Build process & Flash firmware
 ### 1. Startup File (`startup/`)
 * Khởi tạo giá trị ban đầu cho con trỏ ngăn xếp (Stack Pointer - `_estack`).
 * Định nghĩa **Vector Table** chứa địa chỉ các hàm xử lý ngắt, bao gồm cả `USART2_IRQHandler`.
@@ -93,7 +93,7 @@ Hardware Specifications
 * Quản lý các cờ (complier & linker options) của GNU toochain - `arm-none-eabi-gcc` (`-mcpu=cortex-m3 -mthumb -std=gnu11 -O0`).
 * Tổng hóa hóa makefile bằng vpath và patern rules, liên kết các thư mục chứa file tiêu đề (`driver/`, `user/inc/`). Build ra các file (`.o`, `.elf`, `.hex`, `.hex`) vào thư mục `output/`.
 
-## II. Peripherals & Interrupt Configuration
+## III. Peripherals & Interrupt Configuration
 
 ### 1. Peripherals Configuaration
 - Cấu hình trực tiếp cho các ngoại vi (RCC, GPIO, UART) bằng thanh ghi mà không dùng thư viện HAL/SPL.
