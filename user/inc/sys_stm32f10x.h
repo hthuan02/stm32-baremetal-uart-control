@@ -1,14 +1,14 @@
 #ifndef __SYSTEM_STM32F10x_H
 #define __SYSTEM_STM32F10x_H
 
-/* Định nghĩa kiểu dữ liệu cơ bản */
+/* Định nghĩa kiểu dữ liệu */
 typedef unsigned int            uint32_t;
 typedef unsigned short          uint16_t;
 typedef unsigned char           uint8_t;
 typedef int                     int32_t;
 
 /* ========================================================================== */
-/*                         ĐỊA CHỈ NGẮT HỆ THỐNG (NVIC INTERRUPT NUMBER)      */
+/* ĐỊA CHỈ NGẮT HỆ THỐNG */
 /* ========================================================================== */
 typedef enum 
 {
@@ -16,14 +16,16 @@ typedef enum
     NonMaskableInt_IRQn           = -14,
     HardFault_IRQn                = -13,
     
-    USART1_IRQn                   = 37,      /* USART1 global Interrupt */
-    USART2_IRQn                   = 38,      /* USART2 global Interrupt */
-    USART3_IRQn                   = 39       /* USART3 global Interrupt */
+    USART1_IRQn                   = 37,      
+    USART2_IRQn                   = 38,      
+    USART3_IRQn                   = 39      
 } IRQn_Type;
 
 /* ========================================================================== */
-/*                         ĐỊA CHỈ NGOẠI VI (MEMORY MAP)                      */
+/* ĐỊA CHỈ NGOẠI VI (MEMORY MAP) */
 /* ========================================================================== */
+
+/* Địa chỉ gốc (Base address) */
 #define PERIPH_BASE             0x40000000UL
 #define APB1PERIPH_BASE         PERIPH_BASE
 #define APB2PERIPH_BASE         (PERIPH_BASE + 0x00010000UL) /* Ngoại vi xuất phát: AFIO */
@@ -35,7 +37,7 @@ typedef enum
 #define USART2_BASE             (APB1PERIPH_BASE + 0x00004400UL) /* 0x40004400 */
 
 /* ========================================================================== */
-/* CẤU TRÚC THANH GHI (REGISTER LAYOUT)               */
+/* CẤU TRÚC THANH GHI (REGISTER LAYOUT) */
 /* ========================================================================== */
 
 /* Cấu trúc thanh ghi RCC */
@@ -83,8 +85,9 @@ typedef struct
 #define USART2                  ((USART_TypeDef *) USART2_BASE)
 
 /* ========================================================================== */
-/* ĐỊA CHỈ VỊ TRÍ CÁC BIT (BITMASK)                   */
+/* ĐỊA CHỈ VỊ TRÍ CÁC BIT (BITMASK) */
 /* ========================================================================== */
+
 /* Enable Clock cho ngoại vi */
 #define RCC_APB2ENR_IOPAEN      (1U << 2)  /* Bit bật Clock GPIOA */
 #define RCC_APB1ENR_USART2EN    (1U << 17) /* Bit 17: Bật Clock ngoại vi USART2 */
@@ -92,23 +95,23 @@ typedef struct
 
 /* Thanh ghi GPIO_CRL (Quản lý chân 0 -> 7) */
 // Chân PA2 (TX)
-#define GPIO_CRL_MODE2          (3U << 8)  /* Bit 8,9 = 11 */
-#define GPIO_CRL_MODE2_0        (1U << 8)  /* Bit 8 = 1 (Output mode, max speed 2 MHz) */
-#define GPIO_CRL_CNF2           (3U << 10) /* Bit 10,11 = 11 */
-#define GPIO_CRL_CNF2_1         (1U << 11) /* Bit 11 = 1 (Alternate function push-pull) */
+#define GPIO_CRL_MODE2          (3U << 8) 
+#define GPIO_CRL_MODE2_0        (1U << 8)  
+#define GPIO_CRL_CNF2           (3U << 10) 
+#define GPIO_CRL_CNF2_1         (1U << 11) 
 
 // Chân PA3 (RX)
-#define GPIO_CRL_MODE3          (3U << 12) /* Bit 12,13 = 11 */
-#define GPIO_CRL_CNF3           (3U << 14) /* Bit 14,15 = 11 */
-#define GPIO_CRL_CNF3_1         (1U << 15) /* Bit 15 = 1 (Input with pull-up / pull-down) */
+#define GPIO_CRL_MODE3          (3U << 12) 
+#define GPIO_CRL_CNF3           (3U << 14) 
+#define GPIO_CRL_CNF3_1         (1U << 15) 
 
 /* Thanh ghi GPIO_CRH (Quản lý chân 8 -> 15) */
 // Chân PA10 (LED)
-#define GPIO_CRH_MODE10         (3U << 8)  /* Bit 8,9 = 11 (Output mode, max speed 50 MHz) */
-#define GPIO_CRH_CNF10          (3U << 10) /* Bit 10,11 = 11 (General purpose output push-pull) */
+#define GPIO_CRH_MODE10         (3U << 8)  
+#define GPIO_CRH_CNF10          (3U << 10) 
 
 /* ========================================================================== */
-/*                        BITMASK ĐIỀU KHIỂN KHỐI USART                       */
+/* BITMASK ĐIỀU KHIỂN KHỐI USART */
 /* ========================================================================== */
 
 /* Thanh ghi USART_SR */
@@ -144,10 +147,10 @@ typedef struct
 #define USART_CR2_STOP_1_5BIT   (3U << 12) /* 11: 1.5 Stop Bits */
 
 /* ========================================================================== */
-/* CORE CORTEX-M3: HÀM KHỞI TẠO ĐIỀU KHIỂN HỆ THỐNG NGẮT NVIC                */
+/* HÀM KHỞI TẠO BỘ QUẢN LÝ NGẮT (NVIC) */
 /* ========================================================================== */
 
-/* Hàm kích hoạt ngắt trên NVIC */
+/* Enable NVIC */
 static inline void NVIC_EnableIRQ(IRQn_Type IRQn)
 {
     if ((int32_t)IRQn >= 0)
@@ -163,7 +166,7 @@ static inline void NVIC_EnableIRQ(IRQn_Type IRQn)
     }
 }
 
-/* Hàm cài đặt độ ưu tiên ngắt trên NVIC */
+/* Priority NVIC */
 static inline void NVIC_SetPriority(IRQn_Type IRQn, uint32_t priority)
 {
     if ((int32_t)IRQn >= 0)
