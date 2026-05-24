@@ -30,16 +30,6 @@ Project sử dụng vi điều khiển STM32F103C8T6, lõi ARM Cortex-M3. Đây 
 </table>
 <p align="center"><strong><em>Hình 1:</em></strong> Board Blue Pill </p>
 
-**MCU: Overview**
-```c
-SoC Name   : STM32F103C8T6
-SRAM       : 20KB (Address Base: 0x2000 0000)
-Flash      : 64KB (Address Base: 0x0800 0000)
-Peripherals:       Address Base: 0x4000 0000
-```
-
-
-
 <table align="center">
   <tr>
     <td align="center"><img width="420" height="420" alt="Image" src="https://github.com/user-attachments/assets/c2367a30-a875-4d79-a7a1-89127d4251d6" /></td>
@@ -48,10 +38,10 @@ Peripherals:       Address Base: 0x4000 0000
 <p align="center"><strong><em>Hình 2:</em></strong> Module USB-TTL(CP2110) </p>
 
 
-**Module: Overview**
+**Module Overview**
 ```c
 Module Name : USB To TTL CP2102
-Chipset     : CP2102 (Silicon Labs)
+Chipset     : CP2102
 Hardware Specifications
 - Interface     : USB 2.0 to TTL Level (3.3V / 5V Tolerant)
 - Baud Rates    : 300 bps to 1 Mbps
@@ -104,3 +94,21 @@ Hardware Specifications
 * Tổng hóa hóa makefile bằng vpath và patern rules, liên kết các thư mục chứa file tiêu đề (`driver/`, `user/inc/`). Build ra các file (`.o`, `.elf`, `.hex`, `.hex`) vào thư mục `output/`.
 
 ## II. Peripherals & Interrupt Configuration
+
+### 1. Peripherals Configuaration
+- Cấu hình trực tiếp cho các ngoại vi (RCC, GPIO, UART) bằng thanh ghi mà không dùng thư viện HAL/SPL.
+- File `sys_stm32f10x.h` đóng vai trò định nghĩa các địa chỉ gốc (Base address) của thanh ghi. Để có thể thực hiện các phép toán tử bit, thực hiện bitmask bật hoặc tắt 1 bit nào đó trong thanh ghi
+
+
+- Tạo driver và cấu hình các ngoại vi cơ bản của STM32F10x như RCC, GPIO và USART/UART bằng thanh ghi (Register-Level Programming), không sử dụng thư viện HAL hoặc SPL.
+- Xây dựng file `sys_stm32f10x.h` để định nghĩa địa chỉ gốc (base addres) cho ngoại vi của thanh ghi phần cứng thông qua struct pointer, truy cập trực tiếp đến từng thanh ghi của vi điều khiển.
+- Áp dụng các phép toán bitwise và kỹ thuật bitmask để thao tác ở mức bit trên thanh ghi, phục vụ việc bật/tắt clock, cấu hình mode hoạt động và điều khiển trạng thái của ngoại vi một cách linh hoạt và tối ưu tài nguyên hệ thống.
+
+### 2. Interrupt & Ring Buffer
+_Vì sao sử dụng ngắt kết hợp với bộ đệm vòng?_
+* **Hạn chế của cơ chế điều khiển Polling:** Buộc CPU liên tục kiểm tra cờ nhận `RXNE` của UART sẽ khiến CPU "bận" bị khóa một chỗ, lãng phí tài nguyên xử lý tác vụ khác. Đồng thời, nếu CPU bận xử lý hàm Delay nặng đúng lúc dữ liệu đổ về, hệ thống sẽ gặp lỗi tràn và mất mát dữ liệu (Data Overrun).
+  
+* **Giải pháp tối ưu hóa bất đồng bộ:** Hệ thống phân tách độc lập hai quá trình: **Nhận dữ liệu** (Tốc độ phần cứng) và **Xử lý dữ liệu** (Tốc độ phần mềm) thông qua cấu trúc hàng đợi vòng (Ring Buffer) lưu trên SRAM:
+  * **Tầng nhận (Hàm ngắt):** Khi máy tính gửi ký tự, bộ điều khiển ngắt `NVIC` kích hoạt. CPU tạm dừng luồng xử lý chính trong vài chu kỳ xung nhịp để đọc nhanh byte dữ liệu từ thanh ghi `USART2->DR`, đẩy thẳng vào Ring Buffer rồi thoát ngắt ngay lập tức.
+  * **Tầng xử lý (Vòng lặp chính):** Trong hàm `main()`, CPU tự do xử lý các luồng tác vụ hệ thống độc lập. Khi rảnh, nó chủ động kiểm tra Ring Buffer và nhanh chóng bật **LED PA10** đồng thời phản hồi ngược lại trạng thái `LED ON` `LED  OFF` lên PC.
+* **Kết quả:** Cơ chế ngắt giúp CPU sẽ trở nên rảnh không phải ngồi chờ để thực hiện 1 tác vụ, mà có thể chạy tác vụ khác trong main(). Bộ đệm vòng giúp lưu tạm dữ liệu vào RAM, hệ thống sẽ không bị sai sót hay mất byte dữ liệu nào (tránh lỗi Overrun).
