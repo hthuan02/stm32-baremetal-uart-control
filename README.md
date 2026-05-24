@@ -13,7 +13,7 @@
 
 https://github.com/user-attachments/assets/c68e16fb-a437-469e-8056-538dd6c613d1
 
-## Tài liệu nghiên cứu
+## Reference Manual
 | File | Description |
 |---|---|
 |[rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf](rm0008-stm32f101xx-stm32f102xx-stm32f103xx-stm32f105xx-and-stm32f107xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf)| Tra cứu cấu trúc thanh ghi, bản đồ bộ nhớ và cấu hình chi tiết các ngoại vi (RCC, GPIO, UART...) cho dòng STM32F1. |
@@ -65,7 +65,7 @@ Hardware Specifications
 </table>
 <p align="center"><strong><em>Hình 3:</em></strong> Sơ đồ khối chức năng </p>
 
-## II. Cấu trúc thư mục
+## Cấu trúc thư mục
 
 ```text
 ├── doc/                    # Thư mục chứa Reference Manual
@@ -86,4 +86,21 @@ Hardware Specifications
 ├── Makefile                # Script tự động hóa toàn bộ quy trình biên dịch (Build Process)
 └── README.md               # Tài liệu hướng dẫn và mô tả chi tiết dự án
 ```
+## I. Build process & Flash firmware
+### 1. Startup File (`startup/`)
+* Khởi tạo giá trị ban đầu cho con trỏ ngăn xếp (Stack Pointer - `_estack`).
+* Định nghĩa **Vector Table** chứa địa chỉ các hàm xử lý ngắt, bao gồm cả `USART2_IRQHandler`.
+* Sao chép phân đoạn dữ liệu `.data` từ FLASH sang SRAM và xóa phân đoạn `.bss` về `0`.
+* Gọi hàm `main()` để bắt đầu chương trình ứng dụng.
 
+### 2. Linker Script (`linker/`)
+* Định nghĩa chính xác kích thước và địa chỉ vùng nhớ vật lý của STM32F103C8T6:
+  * **FLASH**: 64KB (Bắt đầu từ `0x08000000`)
+  * **SRAM**: 20KB (Bắt đầu từ `0x20000000`)
+* Đặt thứ tự sắp xếp (`.text`, `.rodata`, `.data`, `.bss`) vào các vùng nhớ tương ứng.
+
+### 3. Tự động hóa với Makefile
+* Quản lý các cờ (complier & linker options) của GNU toochain - `arm-none-eabi-gcc` (`-mcpu=cortex-m3 -mthumb -std=gnu11 -O0`).
+* Tổng hóa hóa makefile bằng vpath và patern rules, liên kết các thư mục chứa file tiêu đề (`driver/`, `user/inc/`). Build ra các file (`.o`, `.elf`, `.hex`, `.hex`) vào thư mục `output/`.
+
+## II. Peripherals & Interrupt Configuration
