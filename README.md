@@ -11,7 +11,7 @@
 
 ---
 
-https://github.com/user-attachments/assets/757e9605-6a00-402d-90b2-5cac36012d12
+https://github.com/user-attachments/assets/c68e16fb-a437-469e-8056-538dd6c613d1
 
 ## Tài liệu nghiên cứu
 | File | Description |
