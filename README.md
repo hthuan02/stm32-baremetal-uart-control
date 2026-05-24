@@ -23,7 +23,7 @@ Project sử dụng vi điều khiển STM32F103C8T6, lõi ARM Cortex-M3. Đây 
 
 ### I. Hardware
 
-<img width="400" height="280" alt="Image" src="https://github.com/user-attachments/assets/28de0e0b-8d20-4ddb-9c46-257320c9cb57" />
+<img width="350" height="280" alt="Image" src="https://github.com/user-attachments/assets/28de0e0b-8d20-4ddb-9c46-257320c9cb57" />
 
 
 ```c
@@ -33,8 +33,7 @@ Flash      : 64KB (Address Base: 0x0800 0000)
 Peripherals:       Address Base: 0x4000 0000
 ```
 
-<img width="350" height=350" alt="Image" src="https://github.com/user-attachments/assets/4e57bb34-0627-4743-ba2b-6a47e7b661e7" />
-
+<img width="400" height="400" alt="Image" src="https://github.com/user-attachments/assets/c2367a30-a875-4d79-a7a1-89127d4251d6" />
 
 ```c
 Module Name : USB To TTL CP2102
@@ -43,5 +42,4 @@ Hardware Specifications
 - Interface     : USB 2.0 to TTL Level (3.3V / 5V Tolerant)
 - Baud Rates    : 300 bps to 1 Mbps
 - Pinouts       : 3V3, TXD, RXD, GND, +5V
-- Data Sharing  : Handles serial communication between MCU (UART) and PC Terminal
 ```
