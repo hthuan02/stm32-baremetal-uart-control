@@ -91,7 +91,7 @@ Hardware Specifications
 
 ### 3. Tự động hóa với Makefile
 * Quản lý các cờ (complier & linker options) của GNU toochain - `arm-none-eabi-gcc` (`-mcpu=cortex-m3 -mthumb -std=gnu11 -O0`).
-* Tổng hóa hóa makefile bằng vpath và patern rules, liên kết các thư mục chứa file tiêu đề (`driver/`, `user/inc/`). Build ra các file (`.o`, `.elf`, `.hex`, `.hex`) vào thư mục `output/`.
+* Tổng quát hóa makefile bằng vpath và patern rules, liên kết các thư mục chứa file tiêu đề (`driver/`, `user/inc/`). Build ra các file (`.o`, `.elf`, `.hex`, `.hex`) vào thư mục `output/`.
 
 ## III. Peripherals & Interrupt Configuration
 
