@@ -1,7 +1,7 @@
 # Buid Bare Metal system with UART - STM32F103C8T6
 
 #### Mục tiêu project
-- Xây dựng dự án bare-metal hoàn chỉnh với startup file, linker script, driver ngoại vi và biên dịch bằng Makefile.
+- Xây dựng dự án Bare-Metal hoàn chỉnh với Startup File, Linker Script, Driver ngoại vi và tự động hoá quá trình build process bằng Makefile.
 
 - Hiểu sâu về quá trình Build Process (Compilation, Linking) và quy trình flash firmware xuống MCU mà không phụ thuộc vào IDE.
 
