@@ -1,4 +1,4 @@
-# Buid Bare Metal system with UART - STM32F103C8T6
+# Bare-Metal UART Driver & Build Environment - STM32F103C8T6
 
 #### Mục tiêu project
 - Xây dựng dự án Bare-Metal hoàn chỉnh với Startup File, Linker Script, Driver ngoại vi và tự động hoá quá trình build process bằng Makefile.
